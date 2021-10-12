@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Silber\Bouncer\Database\Ability;
+use Symfony\Component\Process\Exception\ProcessFailedException;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,3 +28,38 @@ Artisan::command('permissions:generate', function () {
 
     });
 })->purpose('generate permissions');
+Artisan::command('easy:install', function () {
+    $total_steps = 3;
+    Artisan::call('migrate:fresh');
+    $this->comment("1/$total_steps tables created");
+
+    Artisan::call("db:seed");
+    $this->comment("2/$total_steps sample data imported");
+
+    Artisan::call("permissions:generate");
+    $this->comment("3/$total_steps permissions list imported");
+
+    $this->comment("npm install ...");
+    $output = run_command(['npm', 'install']);
+    $this->comment($output);
+    $this->comment("4/$total_steps npm packages installed successfully");
+
+    $this->comment("npm run dev ...");
+    $output = run_command(['npm', 'run', 'dev']);
+    $this->comment($output);
+    $this->comment("5/$total_steps npm run finished successfully");
+
+
+
+})->purpose('generate permissions');
+
+function run_command($command){
+    $process = new \Symfony\Component\Process\Process($command);
+    $process->run();
+    // executes after the command finishes
+    if (!$process->isSuccessful()) {
+        throw new ProcessFailedException($process);
+    }
+
+    return $process->getOutput();
+}
