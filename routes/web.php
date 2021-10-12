@@ -27,3 +27,23 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
+
+Route::group(['middleware' => ['auth:sanctum'],'as'=>'admin.'], function () {
+
+    Route::group(['as'=>'admin.','prefix' => 'admin'], function () {
+        Route::get('/schedule-requests',function (){
+            $user = auth()->user();
+            $schedules = \App\Models\Schedule::whereNull('verified')->get();
+            return Inertia::render('',[]);
+        })->name('schedules');
+    });
+
+    Route::group(['as'=>'worker.'], function () {
+        Route::get('/schedules',function (){
+
+        })->name('schedules');
+    });
+
+});
+
+

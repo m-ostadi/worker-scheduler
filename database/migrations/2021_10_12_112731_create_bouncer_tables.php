@@ -77,6 +77,9 @@ class CreateBouncerTables extends Migration
                   ->references('id')->on(Models::table('abilities'))
                   ->onUpdate('cascade')->onDelete('cascade');
         });
+
+        $admin = \App\Models\User::where('email','admin@email.com')->first();
+        $admin->assign('admin');
     }
 
     /**

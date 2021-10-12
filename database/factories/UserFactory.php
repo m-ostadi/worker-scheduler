@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
+use Silber\Bouncer\Database\Role;
 
 class UserFactory extends Factory
 {
@@ -65,5 +66,20 @@ class UserFactory extends Factory
                 }),
             'ownedTeams'
         );
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     *
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function is_worker()
+    {
+
+        return $this->state(function (array $attributes) {
+            return [
+
+            ];
+        });
     }
 }
