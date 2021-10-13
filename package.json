@@ -27,6 +27,8 @@
     },
     "dependencies": {
         "@fullcalendar/core": "^5.9.0",
-        "@fullcalendar/vue3": "^5.9.0"
+        "@fullcalendar/vue3": "^5.9.0",
+        "laravel-echo": "^1.11.2",
+        "socket.io-client": "^4.2.0"
     }
 }

@@ -1132,9 +1132,6 @@ select {
 .top-0 {
 	top: 0px;
 }
-.bottom-1 {
-	bottom: 0.25rem;
-}
 .z-0 {
 	z-index: 0;
 }
@@ -1325,9 +1322,6 @@ select {
 .w-1\/12 {
 	width: 8.333333%;
 }
-.w-1\/6 {
-	width: 16.666667%;
-}
 .min-w-0 {
 	min-width: 0px;
 }
@@ -1351,9 +1345,6 @@ select {
 }
 .flex-grow {
 	flex-grow: 1;
-}
-.table-auto {
-	table-layout: auto;
 }
 .table-fixed {
 	table-layout: fixed;
@@ -1588,6 +1579,14 @@ select {
 	--tw-bg-opacity: 1;
 	background-color: rgba(229, 231, 235, var(--tw-bg-opacity));
 }
+.bg-purple-400 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(167, 139, 250, var(--tw-bg-opacity));
+}
+.bg-blue-400 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(96, 165, 250, var(--tw-bg-opacity));
+}
 .bg-green-500 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(16, 185, 129, var(--tw-bg-opacity));
@@ -1596,25 +1595,9 @@ select {
 	--tw-bg-opacity: 1;
 	background-color: rgba(252, 211, 77, var(--tw-bg-opacity));
 }
-.bg-green-700 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(4, 120, 87, var(--tw-bg-opacity));
-}
-.bg-red-300 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(252, 165, 165, var(--tw-bg-opacity));
-}
 .bg-yellow-500 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(245, 158, 11, var(--tw-bg-opacity));
-}
-.bg-purple-400 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(167, 139, 250, var(--tw-bg-opacity));
-}
-.bg-blue-400 {
-	--tw-bg-opacity: 1;
-	background-color: rgba(96, 165, 250, var(--tw-bg-opacity));
 }
 .bg-opacity-25 {
 	--tw-bg-opacity: 0.25;
