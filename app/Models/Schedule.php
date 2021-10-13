@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\ScheduleRequested;
 use Carbon\Carbon;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -44,6 +45,7 @@ use Illuminate\Database\Eloquent\Model;
 class Schedule extends Model
 {
     use HasFactory;
+    protected $guarded = [];
     protected $casts = [
         'started_at'=>'datetime',
         'ended_at'=>'datetime',
@@ -79,5 +81,11 @@ class Schedule extends Model
         return $date->format('Y-m-d H:i:s');
     }
 
-
+    protected static function booted()
+    {
+        static::created(function ($model){
+            if($model->verified == null)
+                event(new ScheduleRequested($model));
+        });
+    }
 }
