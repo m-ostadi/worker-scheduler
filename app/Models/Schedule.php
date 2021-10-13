@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,8 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  * App\Models\Schedule
  *
  * @property int $id
- * @property string $started_at
- * @property string|null $ended_at
+ * @property Carbon|null $started_at
+ * @property Carbon|null $ended_at
  * @property int $worker_id
  * @property int|null $job_id
  * @property int|null $admin_id
@@ -42,7 +44,24 @@ use Illuminate\Database\Eloquent\Model;
 class Schedule extends Model
 {
     use HasFactory;
-
+    protected $casts = [
+        'started_at'=>'datetime',
+        'ended_at'=>'datetime',
+    ];
+    protected $appends = ['weekday','start_hour','end_hour'];
+    public function getWeekdayAttribute(){
+        return $this->started_at->dayOfWeek;
+    }
+    public function getStartHourAttribute(){
+        if($this->started_at)
+            return $this->started_at->format('H:i');
+        return null;
+    }
+    public function getEndHourAttribute(){
+        if($this->ended_at)
+            return $this->ended_at->format('H:i');
+        return null;
+    }
     public function job(){
         return $this->belongsTo(Job::class);
     }
@@ -55,5 +74,10 @@ class Schedule extends Model
     public function scopeVerified($query){
         return $query->where('verified',1);
     }
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d H:i:s');
+    }
+
 
 }

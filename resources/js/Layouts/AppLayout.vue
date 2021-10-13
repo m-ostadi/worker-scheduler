@@ -22,6 +22,9 @@
                                 <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </jet-nav-link>
+                                <jet-nav-link v-if="$page.props.can.schedules_approval" :href="route('admin.schedules')" :active="route().current('admin.schedules')">
+                                    Manage Requests
+                                </jet-nav-link>
                             </div>
                         </div>
 
@@ -145,6 +148,13 @@
                         <jet-responsive-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
                             Dashboard
                         </jet-responsive-nav-link>
+
+                    </div>
+                    <div class="pt-2 pb-3 space-y-1">
+                        <jet-responsive-nav-link  v-if="$page.props.can.schedules_approval" :href="route('admin.schedules')" :active="route().current('admin.schedules')">
+                            Manage Requests
+                        </jet-responsive-nav-link>
+
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -244,6 +254,7 @@
     export default defineComponent({
         props: {
             title: String,
+            can: Object
         },
 
         components: {

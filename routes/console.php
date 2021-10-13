@@ -26,6 +26,8 @@ Artisan::command('permissions:generate', function () {
         Ability::firstOrCreate(['name'=>'delete-users'],[ 'title'=>'delete users']);
         Ability::firstOrCreate(['name'=>'roles'],[ 'title'=>'edit roles']);
 
+        Bouncer::allow('admin')->to(['schedules-approval','view-users', 'create-users', 'edit-users', 'delete-users', 'roles']);
+
     });
 })->purpose('generate permissions');
 Artisan::command('easy:install', function () {
