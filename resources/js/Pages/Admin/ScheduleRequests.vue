@@ -9,7 +9,7 @@
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <ScheduleWaitlist :user="$page.props.user" :schedules="$page.props.schedules" :jobs="$page.props.jobs"/>
+                    <ScheduleWaitlist :user="$page.props.user" :schedules="$page.props.schedules" :jobs="$page.props.jobs" :week="$page.props.week"/>
                 </div>
             </div>
         </div>

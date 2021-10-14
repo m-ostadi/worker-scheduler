@@ -55,10 +55,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
         Route::get('/schedule-requests',function (){
             $user = auth()->user();
-            $schedules = \App\Models\Schedule::calendarData();
+            $schedules = \App\Models\Schedule::calendarDate();
             $jobs = \App\Models\Job::get();
+            $now = now();
+            $weekStartDate = $now->startOfWeek();
+            $week = [];
+            for($i=0 ;$i<7; $i++ ){
+                $week[] = $weekStartDate->format('Y-m-d');
+                $weekStartDate = $weekStartDate->addDay();
+            }
 
-            return Inertia::render('Admin/ScheduleRequests',compact('user','schedules','jobs'));
+            return Inertia::render('Admin/ScheduleRequests',compact('user','schedules','jobs','week'));
         })->name('schedules');
 
         Route::post('/schedule-requests/approve',function (\Illuminate\Http\Request $request){

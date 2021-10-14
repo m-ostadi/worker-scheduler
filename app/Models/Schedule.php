@@ -50,13 +50,18 @@ class Schedule extends Model
         'started_at'=>'datetime',
         'ended_at'=>'datetime',
     ];
-    protected $appends = ['weekday','start_hour','end_hour'];
+    protected $appends = ['weekday','start_hour','end_hour','start_day'];
     public function getWeekdayAttribute(){
         return $this->started_at->dayOfWeek;
     }
     public function getStartHourAttribute(){
         if($this->started_at)
             return $this->started_at->format('H:i');
+        return null;
+    }
+    public function getStartDayAttribute(){
+        if($this->started_at)
+            return $this->started_at->format('Y-m-d');
         return null;
     }
     public function getEndHourAttribute(){
@@ -99,6 +104,19 @@ class Schedule extends Model
             })->map(function ($job_scs){
                 return $job_scs->mapToGroups(function (\App\Models\Schedule $item,$key){
                     return [$item->started_at->dayOfWeek =>  $item];
+                })->sortKeys();
+            });
+    }
+    static public function calendarDate($user_id = null){
+
+        return \App\Models\Schedule::when($user_id,function ($query)use($user_id){
+            return $query->where('worker_id',$user_id);
+        })->with('worker')->get()
+            ->mapToGroups(function (\App\Models\Schedule $item,$key){
+                return [$item->job_id =>  $item];
+            })->map(function ($job_scs){
+                return $job_scs->mapToGroups(function (\App\Models\Schedule $item,$key){
+                    return [$item->started_at->format('Y-m-d') =>  $item];
                 })->sortKeys();
             });
     }
