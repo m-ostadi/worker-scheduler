@@ -13,7 +13,7 @@
             </p>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <calender :schedules="schedules" :jobs="jobs" />
+                    <Calendar :schedules="$page.props.schedules" :jobs="$page.props.jobs" :user="$page.props.user" />
                     <jet-dialog-modal :show="showScheduleRequestModal" @close="closeModal">
                         <template #title>
                             Request a schedule
@@ -70,15 +70,16 @@
     import JetInput from '@/Jetstream/Input.vue'
     import JetInputError from '@/Jetstream/InputError.vue'
     import JetSecondaryButton from '@/Jetstream/SecondaryButton.vue'
-    import Calender from "../Calender";
+    import Calendar from "./Calendar";
 
     export default {
         props:{
             jobs:Object,
-            schedules:Object
+            schedules:Object,
+            user:Object
         },
         components: {
-            Calender,
+            Calendar,
             AppLayout,
             JetActionSection,
             JetDangerButton,

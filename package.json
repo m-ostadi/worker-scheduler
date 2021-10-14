@@ -29,7 +29,7 @@
         "@fullcalendar/core": "^5.9.0",
         "@fullcalendar/vue3": "^5.9.0",
         "laravel-echo": "^1.11.2",
-        "socket.io-client": "^4.2.0",
+        "socket.io-client": "^2.4.0",
         "vue-toastr": "^2.1.2"
     }
 }

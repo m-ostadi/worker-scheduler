@@ -88,4 +88,18 @@ class Schedule extends Model
                 event(new ScheduleRequested($model));
         });
     }
+
+    static public function calendarData($user_id = null){
+
+        return \App\Models\Schedule::when($user_id,function ($query)use($user_id){
+            return $query->where('worker_id',$user_id);
+        })->with('worker')->get()
+            ->mapToGroups(function (\App\Models\Schedule $item,$key){
+                return [$item->job_id =>  $item];
+            })->map(function ($job_scs){
+                return $job_scs->mapToGroups(function (\App\Models\Schedule $item,$key){
+                    return [$item->started_at->dayOfWeek =>  $item];
+                })->sortKeys();
+            });
+    }
 }

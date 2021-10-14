@@ -3,9 +3,9 @@
         <div v-if="0" class="container mx-auto mt-10">
             <div class="wrapper bg-white rounded shadow w-full ">
                 <div class="header flex justify-between border-b p-2">
-<!--        <span class="text-lg font-bold">-->
-<!--          2020 July-->
-<!--        </span>-->
+                    <!--        <span class="text-lg font-bold">-->
+                    <!--          2020 July-->
+                    <!--        </span>-->
                     <div class="buttons">
                         <button class="p-1">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-left-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -412,13 +412,9 @@
             <tr v-for="job of jobs">
                 <td class=" border p-2">{{job.title}}</td>
                 <td class=" border p-2" v-for="weekday in [0,1,2,3,4,5,6]">
-                    <div :ref="'schedules'+schedule.id" class="border p-2 bg-white" :class="{'bg-green-500':schedule.verified ===1 , 'bg-yellow-300':schedule.verified === 0}" v-for="schedule of currentSchedules[job.id][weekday]">
+                    <div :ref="'schedules'+schedule.id" class="border p-2 bg-white" :class="{'bg-green-500':schedule.verified ===1 , 'bg-yellow-300':schedule.verified === 0}" v-for="schedule of (currentSchedules[job.id] && currentSchedules[job.id][weekday] && currentSchedules[job.id][weekday] || [])">
                         <div>{{schedule.start_hour}}</div>
                         <div>{{schedule.worker.name}}</div>
-                        <div v-if="schedule.verified === null">
-                            <button @click="approveSchedule(schedule)" class="bg-green-500 m-1 p-1 rounded-sm">Approve</button>
-                            <button @click="declineSchedule(schedule)" class="bg-yellow-500 m-1 p-1 rounded-sm">Decline</button>
-                        </div>
                     </div>
                 </td>
             </tr>
@@ -429,9 +425,9 @@
 
 <script>
 import { defineComponent } from 'vue'
-import VueToastr from 'vue-toastr'
 
-export default defineComponent({
+export default {
+
     components: {
 
     },
@@ -442,51 +438,25 @@ export default defineComponent({
         jobs:Object
     },
     mounted() {
-        let testChannel = Echo.channel('test-channel')
-        console.log('test channel object',testChannel)
-
-        testChannel.listen('.new-message',function (message){
-            console.log('.new message',message)
-            alert(message)
-
-        }).error(function(err){
-            console.log('connection error:',err)
-        });
+        console.log('props',this.$props)
     },
 
     data() {
         return {
             currentSchedules : this.$props.schedules
-            // form: this.$inertia.form({
-            //     _method: 'PUT',
-            //     name: this.user.name,
-            //     email: this.user.email,
-            //     photo: null,
-            // }),
-            //
-            // photoPreview: null,
-
         }
     },
-
+    created() {
+        this.listenForBroadcast()
+    },
     methods: {
         listenForBroadcast() {
             console.log('connecting to channel')
-
-
             Echo.channel('requests-channel')
                 .listen('.new-request',function (schedule){
                     console.log('new request',schedule)
                     if(schedule){
                         this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule)
-                        // if(trade.order.side === 'sell')
-                        // {
-                        //     toastr.success( trade.qty.toString() + trade.symbol+' فروخته شد. ' )
-                        // }
-                        // else
-                        //     toastr.success( trade.qty.toString() + trade.symbol+' خریده شد. ' )
-                        //
-
                     }
                     else
                     {
@@ -499,28 +469,7 @@ export default defineComponent({
 
             let testChannel = Echo.channel('test-channel')
             console.log('test channel object',testChannel)
-            testChannel.listen('App\\Events\\MessageEvent',function (message){
-                console.log('App\\Events\\MessageEvent',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
-            testChannel.listen('MessageEvent',function (message){
-                console.log('MessageEvent',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
             testChannel.listen('.new-message',function (message){
-                console.log('.new message',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
-            testChannel.listen('new-message',function (message){
                 console.log('new message',message)
                 alert(message)
 
@@ -528,20 +477,7 @@ export default defineComponent({
                 console.log('connection error:',err)
             });
         },
-        approveSchedule(schedule){
-            this.$inertia.post(route('admin.schedules.approve'), {'id':schedule.id}, {
-                onSuccess:() => {
-                        schedule.verified = 1;
-                    }
-                })
-        },
-        declineSchedule(schedule){
-            this.$inertia.post(route('admin.schedules.decline'), {'id':schedule.id}, {
-                onSuccess:() => {
-                    schedule.verified = 0;
-                }
-            })
-        },
+
     },
-})
+}
 </script>
