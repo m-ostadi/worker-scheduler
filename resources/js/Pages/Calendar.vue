@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="container mx-auto mt-10">
+        <div class="container mx-auto">
             <div class="wrapper bg-white rounded shadow w-full overflow-auto">
                 <div class="header flex justify-between border-b p-2">
                 <span class="text-lg font-bold">
@@ -110,6 +110,12 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+        <div style="margin:10px">
+            <span class=" p-2 m-1">Legend:</span>
+            <span class="bg-purple-400 p-2 m-1 rounded">Pending</span>
+            <span class="bg-green-500 p-2 m-1 rounded">Approved</span>
+            <span class="bg-yellow-300 p-2 m-1 rounded">Declined</span>
         </div>
     </div>
 </template>

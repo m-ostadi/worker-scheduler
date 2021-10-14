@@ -1147,6 +1147,9 @@ select {
 .m-1 {
 	margin: 0.25rem;
 }
+.m-2 {
+	margin: 0.5rem;
+}
 .mx-auto {
 	margin-left: auto;
 	margin-right: auto;
@@ -1225,6 +1228,9 @@ select {
 }
 .mb-1 {
 	margin-bottom: 0.25rem;
+}
+.mb-2 {
+	margin-bottom: 0.5rem;
 }
 .block {
 	display: block;
@@ -1592,6 +1598,10 @@ select {
 .bg-yellow-500 {
 	--tw-bg-opacity: 1;
 	background-color: rgba(245, 158, 11, var(--tw-bg-opacity));
+}
+.bg-purple-500 {
+	--tw-bg-opacity: 1;
+	background-color: rgba(139, 92, 246, var(--tw-bg-opacity));
 }
 .bg-opacity-25 {
 	--tw-bg-opacity: 0.25;

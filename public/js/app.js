@@ -23690,7 +23690,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "container mx-auto mt-10"
+  "class": "container mx-auto"
 };
 var _hoisted_2 = {
   "class": "wrapper bg-white rounded shadow w-full overflow-auto"
@@ -23942,6 +23942,9 @@ var _hoisted_55 = {
 };
 var _hoisted_56 = ["onClick"];
 var _hoisted_57 = ["onClick"];
+
+var _hoisted_58 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div style=\"margin:10px;\"><span class=\"p-2 m-1\">Legend:</span><span class=\"bg-purple-400 p-2 m-1 rounded\">Pending</span><span class=\"bg-green-500 p-2 m-1 rounded\">Approved</span><span class=\"bg-yellow-300 p-2 m-1 rounded\">Declined</span></div>", 1);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.week[0].replaceAll('-', '/').substr(0, 7)), 1
   /* TEXT */
@@ -24009,7 +24012,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     ))]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))])])])])]);
+  ))])])])]), _hoisted_58]);
 }
 
 /***/ }),
@@ -24962,7 +24965,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
 
 var _hoisted_1 = {
-  "class": "container mx-auto mt-10"
+  "class": "container mx-auto"
 };
 var _hoisted_2 = {
   "class": "wrapper bg-white rounded shadow w-full overflow-auto"
@@ -25209,6 +25212,9 @@ var _hoisted_53 = {
 var _hoisted_54 = {
   "class": "time"
 };
+
+var _hoisted_55 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<div style=\"margin:10px;\"><span class=\"p-2 m-1\">Legend:</span><span class=\"bg-purple-400 p-2 m-1 rounded\">Pending</span><span class=\"bg-green-500 p-2 m-1 rounded\">Approved</span><span class=\"bg-yellow-300 p-2 m-1 rounded\">Declined</span></div>", 1);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_4, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.week[0].replaceAll('-', '/').substr(0, 7)), 1
   /* TEXT */
@@ -25262,7 +25268,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     ))]);
   }), 256
   /* UNKEYED_FRAGMENT */
-  ))])])])])]);
+  ))])])])]), _hoisted_55]);
 }
 
 /***/ }),

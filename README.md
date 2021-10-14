@@ -7,7 +7,7 @@ This project is a simple realtime worker scheduler app with [Laravel 8](https://
 Do the following steps one by one:
 
 - clone project on your destination folder
-- create mysql database and add update its information in .env file.
+- create mysql database and update it's information in .env file.
 - open terminal in project folder and run following commands :
 - composer install
 - php artisan easy:install
@@ -15,6 +15,9 @@ Do the following steps one by one:
 ## Usage
 For running the project you should first start the websocket server by following command:
 `php artisan websockets:serve`
+
+And then in another terminal run your laravel server with following command:
+`php artisan serve`
 
 then you can login with admin or worker account with these credentials:
 
