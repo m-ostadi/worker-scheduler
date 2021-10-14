@@ -20162,6 +20162,7 @@ __webpack_require__.r(__webpack_exports__);
       if (schedule) {
         console.log('schedule added.', schedule); // this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule)
 
+        if (!this.currentSchedules[schedule.job_id][schedule.start_day]) this.currentSchedules[schedule.job_id][schedule.start_day] = [];
         this.currentSchedules[schedule.job_id][schedule.start_day].push(schedule);
         this.toast('new ' + schedule.job.title + ' request submitted for ' + schedule.started_at + ' by ' + schedule.worker.name);
       } else {
@@ -20701,11 +20702,14 @@ __webpack_require__.r(__webpack_exports__);
     week: Array
   },
   mounted: function mounted() {
-    Echo["private"]('requests-channel-' + user.id).listen('.request-approved', function (data) {
+    var reqChannel = Echo["private"]('requests-channel-' + this.user.id);
+    console.log(reqChannel);
+    reqChannel.listen('.request-approved', function (data) {
       var schedule = data.schedule;
 
       if (schedule) {
         console.log('schedule approved.', schedule);
+        if (!this.currentSchedules[schedule.job_id][schedule.start_day]) this.currentSchedules[schedule.job_id][schedule.start_day] = [];
         this.currentSchedules[schedule.job_id][schedule.start_day].push(schedule);
         this.toast('your request for ' + schedule.job.title + ' at ' + schedule.started_at + ' approved successfully.');
       } else {
@@ -20716,6 +20720,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (schedule) {
         console.log('schedule declined.', schedule);
+        if (!this.currentSchedules[schedule.job_id][schedule.start_day]) this.currentSchedules[schedule.job_id][schedule.start_day] = [];
         this.currentSchedules[schedule.job_id][schedule.start_day].push(schedule);
         this.toast('your request for ' + schedule.job.title + ' at ' + schedule.started_at + ' declined.');
       } else {
@@ -20786,7 +20791,8 @@ __webpack_require__.r(__webpack_exports__);
   props: {
     jobs: Object,
     schedules: Object,
-    user: Object
+    user: Object,
+    week: Array
   },
   components: {
     Calendar: _Calendar__WEBPACK_IMPORTED_MODULE_7__["default"],
@@ -20819,7 +20825,9 @@ __webpack_require__.r(__webpack_exports__);
       this.form.post(route('worker.schedules.store'), {
         preserveScroll: true,
         onSuccess: function onSuccess() {
-          return _this.closeModal();
+          _this.closeModal();
+
+          _this.$page.props.flash.message = "your schedule request submitted for approval by admin.";
         },
         onError: function onError() {
           return console.log('error store request');
@@ -23965,7 +23973,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", _hoisted_47, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_48, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_49, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(job.title), 1
     /* TEXT */
     )]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.week, function (day) {
-      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                <div class=\"top h-5 w-full\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <span class=\"text-gray-500\">{{ day.substr(8) }}</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_52, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.currentSchedules[job.id][day], function (schedule) {
+      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                <div class=\"top h-5 w-full\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <span class=\"text-gray-500\">{{ day.substr(8) }}</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_52, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.currentSchedules[job.id] && $data.currentSchedules[job.id][day] || [], function (schedule) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
           "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["event bg-purple-400 text-white rounded p-1 text-sm mb-1", {
             'bg-green-300': schedule.verified === 1,
@@ -25232,7 +25240,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", _hoisted_47, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_48, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_49, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(job.title), 1
     /* TEXT */
     )]), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.week, function (day) {
-      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_52, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.currentSchedules[job.id][day], function (schedule) {
+      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("td", _hoisted_50, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_52, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.currentSchedules[job.id] && $data.currentSchedules[job.id][day] || [], function (schedule) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
           "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["event bg-purple-400 text-white rounded p-1 text-sm mb-1", {
             'bg-green-300': schedule.verified === 1,
@@ -25389,7 +25397,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
           }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
             "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
               return $data.form.job_id = $event;
-            })
+            }),
+            required: ""
           }, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.jobs, function (job) {
             return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
               value: job.id
@@ -25411,7 +25420,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
               return $data.form.started_at = $event;
             }),
-            type: "datetime-local"
+            type: "datetime-local",
+            required: ""
           }, null, 8
           /* PROPS */
           , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input_error, {
@@ -25425,7 +25435,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
             "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
               return $data.form.ended_at = $event;
             }),
-            type: "datetime-local"
+            type: "datetime-local",
+            required: ""
           }, null, 8
           /* PROPS */
           , ["modelValue"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input_error, {

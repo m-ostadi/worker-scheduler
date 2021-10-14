@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Events\ScheduleApproved;
+use App\Events\ScheduleDeclined;
 use App\Events\ScheduleRequested;
 use Carbon\Carbon;
 use DateTimeInterface;
@@ -109,8 +111,10 @@ class Schedule extends Model
     }
     static public function calendarDate($user_id = null){
 
-        return \App\Models\Schedule::when($user_id,function ($query)use($user_id){
-            return $query->where('worker_id',$user_id);
+        return \App\Models\Schedule::where(function ($query)use($user_id){
+            if($user_id)
+                return $query->where('worker_id',$user_id);
+            return $query;
         })->with('worker')->get()
             ->mapToGroups(function (\App\Models\Schedule $item,$key){
                 return [$item->job_id =>  $item];

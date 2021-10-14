@@ -24,7 +24,7 @@
                             <form @submit.prevent="submitRequest">
                                 <div class="mt-4">
                                     <label class="block mb-1">Select your job</label>
-                                    <select v-model="form.job_id">
+                                    <select v-model="form.job_id" required>
                                         <option v-for="job in jobs" :value="job.id">{{job.title}}</option>
                                     </select>
                                     <jet-input-error :message="form.errors.job_id" class="mt-2" />
@@ -32,12 +32,12 @@
 
                                 <div class="mt-4">
                                     <label class="mr-2">When it start?</label>
-                                    <jet-input class="border" v-model="form.started_at" type="datetime-local" />
+                                    <jet-input class="border" v-model="form.started_at" type="datetime-local" required/>
                                     <jet-input-error :message="form.errors.started_at" class="mt-2" />
                                 </div>
                                 <div class="mt-4">
                                     <label class="mr-2">When it finish?</label>
-                                    <jet-input class="border" v-model="form.ended_at" type="datetime-local" />
+                                    <jet-input class="border" v-model="form.ended_at" type="datetime-local" required/>
                                     <jet-input-error :message="form.errors.ended_at" class="mt-2" />
                                 </div>
                             </form>
@@ -76,7 +76,8 @@
         props:{
             jobs:Object,
             schedules:Object,
-            user:Object
+            user:Object,
+            week:Array
         },
         components: {
             Calendar,
@@ -104,9 +105,10 @@
                 this.form.reset()
             },
             submitRequest() {
+
                 this.form.post(route('worker.schedules.store'), {
                     preserveScroll: true,
-                    onSuccess: () => this.closeModal(),
+                    onSuccess: () => {this.closeModal(); this.$page.props.flash.message = "your schedule request submitted for approval by admin." },
                     onError: () => console.log('error store request'),
                     onFinish: () => this.form.reset(),
                 })

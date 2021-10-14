@@ -41,21 +41,6 @@ Route::get('/welcome', function () {
 });
 
 
-/**
- * @return array
- */
-function getWeek(): array
-{
-    $now = now();
-    $weekStartDate = $now->startOfWeek();
-    $week = [];
-    for ($i = 0; $i < 7; $i++) {
-        $week[] = $weekStartDate->format('Y-m-d');
-        $weekStartDate = $weekStartDate->addDay();
-    }
-    return $week;
-}
-
 
 Route::middleware(['auth:sanctum'])->get('/dashboard',[ScheduleWorkerController::class,'index'] )->name('dashboard');
 
@@ -68,7 +53,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::group(['as'=>'worker.'], function () {
-        Route::post('/schedules',[ScheduleWorkerController::class,'index'])->name('schedules.store');
+        Route::post('/schedules',[ScheduleWorkerController::class,'store'])->name('schedules.store');
     });
 });
 

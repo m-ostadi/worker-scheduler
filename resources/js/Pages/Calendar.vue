@@ -94,7 +94,7 @@
                                 <div class="bottom flex-grow overflow-auto h-30 py-1 w-full cursor-pointer" >
                                     <div class="event bg-purple-400 text-white rounded p-1 text-sm mb-1"
                                          :class="{'bg-green-300':schedule.verified ===1 , 'bg-yellow-300':schedule.verified === 0}"
-                                         v-for="schedule of currentSchedules[job.id][day]" key="schedule.id">
+                                         v-for="schedule of (currentSchedules[job.id] && currentSchedules[job.id][day]) || []" key="schedule.id">
                                         <span class="event-name block" >
                                             {{schedule.worker.name}}
                                         </span>
@@ -128,11 +128,15 @@ export default {
         week:Array
     },
     mounted() {
-        Echo.private('requests-channel-'+user.id)
-            .listen('.request-approved',function (data){
+
+        let reqChannel = Echo.private('requests-channel-'+this.user.id)
+        console.log(reqChannel)
+            reqChannel.listen('.request-approved',function (data){
                 let schedule = data.schedule
                 if(schedule){
                     console.log('schedule approved.',schedule)
+                    if(!this.currentSchedules[schedule.job_id][schedule.start_day])
+                        this.currentSchedules[schedule.job_id][schedule.start_day]=[]
                     this.currentSchedules[schedule.job_id][schedule.start_day].push(schedule)
                     this.toast('your request for '+schedule.job.title +' at '+schedule.started_at+ ' approved successfully.')
                 }
@@ -145,6 +149,8 @@ export default {
                 let schedule = data.schedule
                 if(schedule){
                     console.log('schedule declined.',schedule)
+                    if(!this.currentSchedules[schedule.job_id][schedule.start_day])
+                        this.currentSchedules[schedule.job_id][schedule.start_day]=[]
                     this.currentSchedules[schedule.job_id][schedule.start_day].push(schedule)
                     this.toast('your request for '+schedule.job.title +' at '+schedule.started_at+ ' declined.')
                 }

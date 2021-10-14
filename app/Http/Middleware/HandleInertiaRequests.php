@@ -36,9 +36,10 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request)
     {
+        $user = auth()->user();
         return array_merge(parent::share($request), [
-            'can.schedules_approval'=>fn()=> auth()->user()->can('schedules-approval'),
-            'can.request_schedule'=>fn()=> auth()->user()->can('request-schedule'),
+            'can.schedules_approval'=>fn()=> !empty($user)?$user->can('schedules-approval'):false,
+            'can.request_schedule'=>fn()=> !empty($user)?$user->can('request-schedule'):false,
             'flash' => [
                 'message' => fn () => $request->session()->get('message')
             ],

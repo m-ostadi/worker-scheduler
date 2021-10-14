@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Job;
+use App\Models\Schedule;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Redirect;
@@ -10,12 +12,13 @@ class ScheduleWorkerController extends Controller
 {
     public function index(Request $request){
         $user = auth()->user();
-        $jobs = \App\Models\Job::all();
+        $jobs = Job::all();
         if(!$user->isA('admin'))
-            $schedules = \App\Models\Schedule::calendarDate($user->id);
+            $schedules = Schedule::calendarDate($user->id);
         else
-            $schedules = \App\Models\Schedule::calendarDate();
+            $schedules = Schedule::calendarDate();
         $week = getWeek();
+
         return Inertia::render('Dashboard',compact('user','jobs','schedules','week'));
     }
     public function store(Request $request){
@@ -25,7 +28,7 @@ class ScheduleWorkerController extends Controller
             'job_id'=>'integer|required|exists:jobs,id'
         ]);
         $input['worker_id'] = auth()->id();
-        \App\Models\Schedule::create($input);
+        Schedule::create($input);
         session()->flash('message','Schedule request submitted for admin approval.');
         return Redirect::route('dashboard');
     }
