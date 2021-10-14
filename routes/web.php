@@ -23,9 +23,23 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::get('/test', function () {
+//   $s = \App\Models\Schedule::create([
+//       'started_at' => now(),
+//       'ended_at'=> now()->addHours(4),
+//       'worker_id' => 3,
+//       'job_id' => 1,
+//   ]);
+
+    event(new \App\Events\MessageEvent('salam'));
+
+});
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = auth()->user();
+    $jobs = \App\Models\Job::all();
+
+    return Inertia::render('Dashboard',compact('user','jobs'));
 })->name('dashboard');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -42,6 +56,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
                         return [$item->started_at->dayOfWeek =>  $item];
                     })->sortKeys();
                 });
+
             $jobs = \App\Models\Job::get();
 
 //            foreach ($jobs as $key => $job){
@@ -79,11 +94,18 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     });
 
     Route::group(['as'=>'worker.'], function () {
-        Route::get('/schedules',function (){
-
-        })->name('schedules');
+        Route::post('/schedules',function (\Illuminate\Http\Request $request){
+            $input = $request->validate([
+                'started_at'=>'required|date',
+                'ended_at'=>'required|date',
+                'job_id'=>'integer|required|exists:jobs,id'
+            ]);
+            $input['worker_id'] = auth()->id();
+            \App\Models\Schedule::create($input);
+            session()->flash('message','Schedule request submitted for admin approval.');
+            return Redirect::route('dashboard');
+        })->name('schedules.store');
     });
-
 });
 
 

@@ -20,6 +20,7 @@ Artisan::command('permissions:generate', function () {
     DB::transaction(function (){
         //$scope = 103;
         Ability::firstOrCreate(['name'=>'schedules-approval'],[ 'title'=>'schedules approval']);
+        Ability::firstOrCreate(['name'=>'request-schedule'],[ 'title'=>'request schedule']);
         Ability::firstOrCreate(['name'=>'view-users'],[ 'title'=>'view users']);
         Ability::firstOrCreate(['name'=>'create-users'],[ 'title'=>'create users']);
         Ability::firstOrCreate(['name'=>'edit-users'],[ 'title'=>'edit users']);
@@ -27,6 +28,7 @@ Artisan::command('permissions:generate', function () {
         Ability::firstOrCreate(['name'=>'roles'],[ 'title'=>'edit roles']);
 
         Bouncer::allow('admin')->to(['schedules-approval','view-users', 'create-users', 'edit-users', 'delete-users', 'roles']);
+        Bouncer::allow('worker')->to(['request-schedule']);
 
     });
 })->purpose('generate permissions');
@@ -65,3 +67,26 @@ function run_command($command){
 
     return $process->getOutput();
 }
+
+
+
+
+Artisan::command('red',function ( ){
+    dump(Redis::set('salam',19));
+    dd(Redis::get('salam'));
+});
+Artisan::command('pred',function ( ){
+    dump(Redis::subscribe('prices',function ($message){
+        dump($message);
+    }));
+});
+Artisan::command('ppub',function ( ){
+
+//    for($i = 0;$i<1000000;$i++)
+//    Redis::set('prices:'.$i,$i);
+    Redis::pipeline(function ($pipe){
+        for($i = 0;$i<100;$i++)
+            $pipe->publish('prices',$i);
+    });
+
+});

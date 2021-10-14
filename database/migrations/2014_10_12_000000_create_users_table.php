@@ -24,7 +24,8 @@ class CreateUsersTable extends Migration
             $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
         });
-        $user = \App\Models\User::create(['email' => 'admin@email.com','name'=>'admin','password' => bcrypt('password')]);
+        \App\Models\User::create(['email' => 'admin@email.com','name'=>'admin','password' => bcrypt('password')]);
+        \App\Models\User::create(['email' => 'worker@email.com','name'=>'worker','password' => bcrypt('password')]);
 
     }
 

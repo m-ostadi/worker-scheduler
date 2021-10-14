@@ -235,6 +235,9 @@
 
             <!-- Page Content -->
             <main>
+                <div v-if="$page.props.flash.message" @click="$page.props.flash.message = false" class="alert p-3 bg-green-500 border rounded hover:cursor-pointer hour:bg-green-300" style="position: fixed; right: 10px; bottom: 20px;">
+                    {{ $page.props.flash.message }}
+                </div>
                 <slot></slot>
             </main>
         </div>

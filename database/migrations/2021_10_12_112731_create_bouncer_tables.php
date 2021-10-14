@@ -79,7 +79,9 @@ class CreateBouncerTables extends Migration
         });
 
         $admin = \App\Models\User::where('email','admin@email.com')->first();
+        $worker = \App\Models\User::where('email','worker@email.com')->first();
         $admin->assign('admin');
+        $worker->assign('worker');
     }
 
     /**

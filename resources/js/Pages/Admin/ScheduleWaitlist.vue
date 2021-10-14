@@ -411,9 +411,9 @@
             <tbody>
             <tr v-for="job of jobs">
                 <td class=" border p-2">{{job.title}}</td>
-                <td class=" border p-2" v-for="weekday of schedules[job.id]">
-                    <div :ref="'schedules'+schedule.id" class="border p-2 bg-white" :class="{'bg-green-500':schedule.verified , 'bg-yellow-300':schedule.verified === 0}" v-for="schedule of weekday">
-                        <div>{{schedule.started_at}}</div>
+                <td class=" border p-2" v-for="weekday in [0,1,2,3,4,5,6]">
+                    <div :ref="'schedules'+schedule.id" class="border p-2 bg-white" :class="{'bg-green-500':schedule.verified ===1 , 'bg-yellow-300':schedule.verified === 0}" v-for="schedule of currentSchedules[job.id][weekday]">
+                        <div>{{schedule.start_hour}}</div>
                         <div>{{schedule.worker.name}}</div>
                         <div v-if="schedule.verified === null">
                             <button @click="approveSchedule(schedule)" class="bg-green-500 m-1 p-1 rounded-sm">Approve</button>
@@ -429,7 +429,7 @@
 
 <script>
 import { defineComponent } from 'vue'
-
+import VueToastr from 'vue-toastr'
 
 export default defineComponent({
     components: {
@@ -447,7 +447,7 @@ export default defineComponent({
 
     data() {
         return {
-            schedules : this.$props.schedules
+            currentSchedules : this.$props.schedules
             // form: this.$inertia.form({
             //     _method: 'PUT',
             //     name: this.user.name,
@@ -459,17 +459,56 @@ export default defineComponent({
 
         }
     },
-    methods: {
+    created() {
+       // this.$toastr.s('salam','chetori')
 
+        this.listenForBroadcast()
+    },
+    methods: {
+        listenForBroadcast() {
+            console.log('connecting to channel')
+            Echo.channel('requests-channel')
+                .listen('.new-request',function (schedule){
+                    console.log('new request',schedule)
+                    if(schedule){
+                        this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule)
+                        // if(trade.order.side === 'sell')
+                        // {
+                        //     toastr.success( trade.qty.toString() + trade.symbol+' فروخته شد. ' )
+                        // }
+                        // else
+                        //     toastr.success( trade.qty.toString() + trade.symbol+' خریده شد. ' )
+                        //
+
+                    }
+                    else
+                    {
+                        console.log('not connected to notification server.')
+                    }
+                })
+                .error(function(err){
+                    console.log('connection error:',err)
+                });
+
+            let testChannel = Echo.channel('test-channel')
+            console.log('test channel object',testChannel)
+            testChannel.listen('.new-message',function (message){
+                console.log('new message',message)
+                alert(message)
+
+            }).error(function(err){
+                console.log('connection error:',err)
+            });
+        },
         approveSchedule(schedule){
             this.$inertia.post(route('admin.schedules.approve'), {'id':schedule.id}, {
-                    onSuccess:() => {
+                onSuccess:() => {
                         schedule.verified = 1;
                         //console.log('approved', this.$refs['schedules'+schedule.id])
-                        let schedule_el = this.$refs['schedules'+schedule.id];
+                        // let schedule_el = this.$refs['schedules'+schedule.id];
                         // schedule_el.style.backgroundColor = 'green';
-                        schedule_el.classList.value = 'border p-2 bg-green-500';
-                        alert('schedule approved successfully!')
+                        // schedule_el.classList.value = 'border p-2 bg-green-500';
+                        // alert('schedule approved successfully!')
                         // $ref('schedules.'+schedule.id);
                     }
                 })
@@ -477,10 +516,10 @@ export default defineComponent({
         declineSchedule(schedule){
             this.$inertia.post(route('admin.schedules.decline'), {'id':schedule.id}, {
                 onSuccess:() => {
-                    schedule.verified = 1;
-                    let schedule_el = this.$refs['schedules'+schedule.id];
-                    schedule_el.classList.value = 'border p-2 bg-yellow-300';
-                    alert('schedule declined successfully!')
+                    schedule.verified = 0;
+                    // let schedule_el = this.$refs['schedules'+schedule.id];
+                    // schedule_el.classList.value = 'border p-2 bg-yellow-300';
+                    // alert('schedule declined successfully!')
                 }
             })
         },
