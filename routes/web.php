@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ScheduleAdminController;
+use App\Http\Controllers\ScheduleWorkerController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,66 +40,35 @@ Route::get('/welcome', function () {
     return view('welcome');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    $user = auth()->user();
-    $jobs = \App\Models\Job::all();
-    if(!$user->isA('admin'))
-        $schedules = \App\Models\Schedule::calendarData($user->id);
-    else
-        $schedules = \App\Models\Schedule::calendarData();
 
-    return Inertia::render('Dashboard',compact('user','jobs','schedules'));
-})->name('dashboard');
+/**
+ * @return array
+ */
+function getWeek(): array
+{
+    $now = now();
+    $weekStartDate = $now->startOfWeek();
+    $week = [];
+    for ($i = 0; $i < 7; $i++) {
+        $week[] = $weekStartDate->format('Y-m-d');
+        $weekStartDate = $weekStartDate->addDay();
+    }
+    return $week;
+}
+
+
+Route::middleware(['auth:sanctum'])->get('/dashboard',[ScheduleWorkerController::class,'index'] )->name('dashboard');
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::group(['as'=>'admin.','prefix' => 'admin'], function () {
-
-        Route::get('/schedule-requests',function (){
-            $user = auth()->user();
-            $schedules = \App\Models\Schedule::calendarDate();
-            $jobs = \App\Models\Job::get();
-            $now = now();
-            $weekStartDate = $now->startOfWeek();
-            $week = [];
-            for($i=0 ;$i<7; $i++ ){
-                $week[] = $weekStartDate->format('Y-m-d');
-                $weekStartDate = $weekStartDate->addDay();
-            }
-
-            return Inertia::render('Admin/ScheduleRequests',compact('user','schedules','jobs','week'));
-        })->name('schedules');
-
-        Route::post('/schedule-requests/approve',function (\Illuminate\Http\Request $request){
-            $user = auth()->user();
-            $input = $request->validate(['id'=>'required|integer|exists:schedules']);
-            $schedule = \App\Models\Schedule::find($input['id']);
-            $schedule->update(['verified' => 1,'verified_at' => now(),'admin_id' => $user->id]);;
-            return Redirect::route('admin.schedules');
-        })->name('schedules.approve');
-
-        Route::post('/schedule-requests/decline',function (\Illuminate\Http\Request $request){
-            $user = auth()->user();
-            $input = $request->validate(['id'=>'required|integer|exists:schedules']);
-            $schedule = \App\Models\Schedule::find($input['id']);
-            $schedule->update(['verified' => 0,'verified_at' => now(),'admin_id' => $user->id]);;
-            return Redirect::route('admin.schedules');
-        })->name('schedules.decline');
-
+        Route::get('/schedule-requests',[ScheduleAdminController::class,'index'])->name('schedules');
+        Route::post('/schedule-requests/approve',[ScheduleAdminController::class,'approve'])->name('schedules.approve');
+        Route::post('/schedule-requests/decline',[ScheduleAdminController::class,'decline'])->name('schedules.decline');
     });
 
     Route::group(['as'=>'worker.'], function () {
-        Route::post('/schedules',function (\Illuminate\Http\Request $request){
-            $input = $request->validate([
-                'started_at'=>'required|date',
-                'ended_at'=>'required|date',
-                'job_id'=>'integer|required|exists:jobs,id'
-            ]);
-            $input['worker_id'] = auth()->id();
-            \App\Models\Schedule::create($input);
-            session()->flash('message','Schedule request submitted for admin approval.');
-            return Redirect::route('dashboard');
-        })->name('schedules.store');
+        Route::post('/schedules',[ScheduleWorkerController::class,'index'])->name('schedules.store');
     });
 });
 
