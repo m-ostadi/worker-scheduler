@@ -411,11 +411,11 @@
             <tbody>
             <tr v-for="job of jobs">
                 <td class=" border p-2">{{job.title}}</td>
-                <td class=" border p-2" v-for="weekday in [0,1,2,3,4,5,6]">
-                    <div :ref="'schedules'+schedule.id" class="border p-2 bg-white" :class="{'bg-green-500':schedule.verified ===1 , 'bg-yellow-300':schedule.verified === 0}" v-for="schedule of currentSchedules[job.id][weekday]">
+                <td class=" border p-2" v-for="weekday in [0,1,2,3,4,5,6]" key="weekday">
+                    <div :ref="'schedules'+schedule.id" class="border p-2 bg-white" :class="{'bg-green-500':schedule.verified ===1 , 'bg-yellow-300':schedule.verified === 0}" v-for="schedule of currentSchedules[job.id][weekday]" key="schedule.id">
                         <div>{{schedule.start_hour}}</div>
                         <div>{{schedule.worker.name}}</div>
-                        <div v-if="schedule.verified === null">
+                        <div v-if="schedule.verified === null || schedule.verified === undefined">
                             <button @click="approveSchedule(schedule)" class="bg-green-500 m-1 p-1 rounded-sm">Approve</button>
                             <button @click="declineSchedule(schedule)" class="bg-yellow-500 m-1 p-1 rounded-sm">Decline</button>
                         </div>
@@ -431,7 +431,7 @@
 import { defineComponent } from 'vue'
 import VueToastr from 'vue-toastr'
 
-export default defineComponent({
+export default {
     components: {
 
     },
@@ -442,106 +442,61 @@ export default defineComponent({
         jobs:Object
     },
     mounted() {
-        let testChannel = Echo.channel('test-channel')
-        console.log('test channel object',testChannel)
 
-        testChannel.listen('.new-message',function (message){
-            console.log('.new message',message)
-            alert(message)
+        Echo.channel('requests-channel')
+            .listen('.new-request',function (data){
+                let schedule = data.schedule
+                if(schedule){
+                    console.log('schedule added.',schedule)
+                    this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule)
+                    this.toast('new '+schedule.job.title +' request submitted for '+schedule.started_at+ ' by '+schedule.worker.name)
+                }
+                else
+                {
+                    console.log('not connected to notification server.')
+                }
+            }.bind(this))
+            .error(function(err){
+                console.log('connection error:',err)
+            });
 
-        }).error(function(err){
-            console.log('connection error:',err)
-        });
+        // Echo.channel('test-channel').listen('.new-message',function (data){
+        //         console.log('new message',data.message)
+        //         this.toastMessage = data.message
+        //     }.bind(this))
+        //     .error(function(err){
+        //         console.log('connection error:',err)
+        //     });
     },
 
     data() {
         return {
-            currentSchedules : this.$props.schedules
-            // form: this.$inertia.form({
-            //     _method: 'PUT',
-            //     name: this.user.name,
-            //     email: this.user.email,
-            //     photo: null,
-            // }),
-            //
-            // photoPreview: null,
-
+            currentSchedules : this.$props.schedules,
         }
     },
-
     methods: {
-        listenForBroadcast() {
-            console.log('connecting to channel')
-
-
-            Echo.channel('requests-channel')
-                .listen('.new-request',function (schedule){
-                    console.log('new request',schedule)
-                    if(schedule){
-                        this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule)
-                        // if(trade.order.side === 'sell')
-                        // {
-                        //     toastr.success( trade.qty.toString() + trade.symbol+' فروخته شد. ' )
-                        // }
-                        // else
-                        //     toastr.success( trade.qty.toString() + trade.symbol+' خریده شد. ' )
-                        //
-
-                    }
-                    else
-                    {
-                        console.log('not connected to notification server.')
-                    }
-                })
-                .error(function(err){
-                    console.log('connection error:',err)
-                });
-
-            let testChannel = Echo.channel('test-channel')
-            console.log('test channel object',testChannel)
-            testChannel.listen('App\\Events\\MessageEvent',function (message){
-                console.log('App\\Events\\MessageEvent',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
-            testChannel.listen('MessageEvent',function (message){
-                console.log('MessageEvent',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
-            testChannel.listen('.new-message',function (message){
-                console.log('.new message',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
-            testChannel.listen('new-message',function (message){
-                console.log('new message',message)
-                alert(message)
-
-            }).error(function(err){
-                console.log('connection error:',err)
-            });
+        toast(message){
+            this.$page.props.flash.message = message
         },
         approveSchedule(schedule){
             this.$inertia.post(route('admin.schedules.approve'), {'id':schedule.id}, {
                 onSuccess:() => {
                         schedule.verified = 1;
-                    }
-                })
+                        this.toast('successfully approved.')
+                    },
+                preserveScroll: true}
+            )
         },
         declineSchedule(schedule){
             this.$inertia.post(route('admin.schedules.decline'), {'id':schedule.id}, {
                 onSuccess:() => {
                     schedule.verified = 0;
-                }
+                    this.toast('successfully declined.')
+
+                },
+                preserveScroll: true
             })
         },
     },
-})
+}
 </script>

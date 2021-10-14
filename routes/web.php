@@ -24,14 +24,14 @@ Route::get('/', function () {
     ]);
 });
 Route::get('/test', function () {
-//   $s = \App\Models\Schedule::create([
-//       'started_at' => now(),
-//       'ended_at'=> now()->addHours(4),
-//       'worker_id' => 3,
-//       'job_id' => 1,
-//   ]);
+   \App\Models\Schedule::create([
+       'started_at' => now(),
+       'ended_at'=> now()->addHours(4),
+       'worker_id' => 3,
+       'job_id' => 1,
+   ])->load(['worker','job']);
 
-    event(new \App\Events\MessageEvent('salam'));
+//    event(new \App\Events\MessageEvent('salam'));
 
 });
 Route::get('/welcome', function () {

@@ -2,15 +2,17 @@
 
 namespace App\Events;
 
+use App\Models\Schedule;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ScheduleRequested implements ShouldBroadcast
+class ScheduleRequested implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -20,9 +22,10 @@ class ScheduleRequested implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct($schedule)
+    public function __construct(Schedule $schedule)
     {
-        $this->schedule = $schedule;
+        $this->schedule = $schedule->loadMissing(['job','worker']);
+
     }
 
     /**
@@ -33,7 +36,7 @@ class ScheduleRequested implements ShouldBroadcast
     public function broadcastOn()
     {
 //        return new PrivateChannel('requests-channel');
-        return ['requests-channel'];
+        return new Channel('requests-channel');
     }
 
     public function broadcastAs()

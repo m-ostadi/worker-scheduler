@@ -20148,7 +20148,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_toastr__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-toastr */ "./node_modules/vue-toastr/dist/vue-toastr.esm.js");
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,vue__WEBPACK_IMPORTED_MODULE_0__.defineComponent)({
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {},
   props: {
     user: Object,
@@ -20156,95 +20156,65 @@ __webpack_require__.r(__webpack_exports__);
     jobs: Object
   },
   mounted: function mounted() {
-    var testChannel = Echo.channel('test-channel');
-    console.log('test channel object', testChannel);
-    testChannel.listen('.new-message', function (message) {
-      console.log('.new message', message);
-      alert(message);
-    }).error(function (err) {
+    Echo.channel('requests-channel').listen('.new-request', function (data) {
+      var schedule = data.schedule;
+
+      if (schedule) {
+        console.log('schedule added.', schedule);
+        this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule);
+        this.toast('new ' + schedule.job.title + ' request submitted for ' + schedule.started_at + ' by ' + schedule.worker.name);
+      } else {
+        console.log('not connected to notification server.');
+      }
+    }.bind(this)).error(function (err) {
       console.log('connection error:', err);
-    });
+    }); // Echo.channel('test-channel').listen('.new-message',function (data){
+    //         console.log('new message',data.message)
+    //         this.toastMessage = data.message
+    //     }.bind(this))
+    //     .error(function(err){
+    //         console.log('connection error:',err)
+    //     });
   },
   data: function data() {
     return {
-      currentSchedules: this.$props.schedules // form: this.$inertia.form({
-      //     _method: 'PUT',
-      //     name: this.user.name,
-      //     email: this.user.email,
-      //     photo: null,
-      // }),
-      //
-      // photoPreview: null,
-
+      currentSchedules: this.$props.schedules
     };
   },
   methods: {
-    listenForBroadcast: function listenForBroadcast() {
-      console.log('connecting to channel');
-      Echo.channel('requests-channel').listen('.new-request', function (schedule) {
-        console.log('new request', schedule);
-
-        if (schedule) {
-          this.currentSchedules[schedule.job_id][schedule.weekday].push(schedule); // if(trade.order.side === 'sell')
-          // {
-          //     toastr.success( trade.qty.toString() + trade.symbol+' فروخته شد. ' )
-          // }
-          // else
-          //     toastr.success( trade.qty.toString() + trade.symbol+' خریده شد. ' )
-          //
-        } else {
-          console.log('not connected to notification server.');
-        }
-      }).error(function (err) {
-        console.log('connection error:', err);
-      });
-      var testChannel = Echo.channel('test-channel');
-      console.log('test channel object', testChannel);
-      testChannel.listen('App\\Events\\MessageEvent', function (message) {
-        console.log('App\\Events\\MessageEvent', message);
-        alert(message);
-      }).error(function (err) {
-        console.log('connection error:', err);
-      });
-      testChannel.listen('MessageEvent', function (message) {
-        console.log('MessageEvent', message);
-        alert(message);
-      }).error(function (err) {
-        console.log('connection error:', err);
-      });
-      testChannel.listen('.new-message', function (message) {
-        console.log('.new message', message);
-        alert(message);
-      }).error(function (err) {
-        console.log('connection error:', err);
-      });
-      testChannel.listen('new-message', function (message) {
-        console.log('new message', message);
-        alert(message);
-      }).error(function (err) {
-        console.log('connection error:', err);
-      });
+    toast: function toast(message) {
+      this.$page.props.flash.message = message;
     },
     approveSchedule: function approveSchedule(schedule) {
+      var _this = this;
+
       this.$inertia.post(route('admin.schedules.approve'), {
         'id': schedule.id
       }, {
         onSuccess: function onSuccess() {
           schedule.verified = 1;
-        }
+
+          _this.toast('successfully approved.');
+        },
+        preserveScroll: true
       });
     },
     declineSchedule: function declineSchedule(schedule) {
+      var _this2 = this;
+
       this.$inertia.post(route('admin.schedules.decline'), {
         'id': schedule.id
       }, {
         onSuccess: function onSuccess() {
           schedule.verified = 0;
-        }
+
+          _this2.toast('successfully declined.');
+        },
+        preserveScroll: true
       });
     }
   }
-}));
+});
 
 /***/ }),
 
@@ -23717,7 +23687,8 @@ var _hoisted_6 = {
   "class": "border p-2"
 };
 var _hoisted_7 = {
-  "class": "border p-2"
+  "class": "border p-2",
+  key: "weekday"
 };
 var _hoisted_8 = {
   key: 0
@@ -23725,31 +23696,32 @@ var _hoisted_8 = {
 var _hoisted_9 = ["onClick"];
 var _hoisted_10 = ["onClick"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [ false ? (0) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.jobs, function (job) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [ false ? (0) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($props.jobs, function (job) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(job.title), 1
     /* TEXT */
     ), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)([0, 1, 2, 3, 4, 5, 6], function (weekday) {
-      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.currentSchedules[job.id][weekday], function (schedule) {
+      return (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("td", _hoisted_7, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.currentSchedules[job.id][weekday], function (schedule) {
         return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
           ref: 'schedules' + schedule.id,
           "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["border p-2 bg-white", {
             'bg-green-500': schedule.verified === 1,
             'bg-yellow-300': schedule.verified === 0
-          }])
+          }]),
+          key: "schedule.id"
         }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(schedule.start_hour), 1
         /* TEXT */
         ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(schedule.worker.name), 1
         /* TEXT */
-        ), schedule.verified === null ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+        ), schedule.verified === null || schedule.verified === undefined ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
           onClick: function onClick($event) {
-            return _ctx.approveSchedule(schedule);
+            return $options.approveSchedule(schedule);
           },
           "class": "bg-green-500 m-1 p-1 rounded-sm"
         }, "Approve", 8
         /* PROPS */
         , _hoisted_9), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
           onClick: function onClick($event) {
-            return _ctx.declineSchedule(schedule);
+            return $options.declineSchedule(schedule);
           },
           "class": "bg-yellow-500 m-1 p-1 rounded-sm"
         }, "Decline", 8
@@ -23757,8 +23729,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
         , _hoisted_10)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)], 2
         /* CLASS */
         );
-      }), 256
-      /* UNKEYED_FRAGMENT */
+      }), 128
+      /* KEYED_FRAGMENT */
       ))]);
     }), 64
     /* STABLE_FRAGMENT */
